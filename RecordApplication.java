@@ -17,7 +17,8 @@ public class RecordApplication {
             System.out.println("2. Get Record by ID");
             System.out.println("3. List All Records");
             System.out.println("4. Save your record");
-            System.out.println("5. Exit");
+            System.out.println("5. Delete Record by ID");
+            System.out.println("6. Exit");
             System.out.print("Choose an option: ");
 
             int choice;
@@ -43,6 +44,7 @@ public class RecordApplication {
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid ID format. Please enter a valid number.");
                     }
+                    break;
                 }
                 case 2 -> {
                     try {
@@ -60,6 +62,7 @@ public class RecordApplication {
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid ID format. Please enter a valid number.");
                     }
+                    break;
                 }
                 case 3 -> {
                     System.out.println("\nAll Records:");
@@ -71,12 +74,30 @@ public class RecordApplication {
                             System.out.println("ID: " + r.getId() + ", Details: " + r.getDetails());
                         }
                     }
+                    break;
                 }
                 case 4 -> {
                     recordManager.saveToFile(FILENAME);
                     System.out.println("Records saved to " + FILENAME);
+                    break;
                 }
                 case 5 -> {
+                    try {
+                        System.out.print("Enter Record ID to delete: ");
+                        long deleteId = Long.parseLong(scanner.nextLine());
+
+                        boolean deleted = recordManager.deleteRecord(deleteId);
+                        if (deleted) {
+                            System.out.println("Record deleted successfully.");
+                        } else {
+                            System.out.println("Record not found.");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid ID format. Please enter a valid number.");
+                    }
+                    break;
+                }
+                case 6 -> {
                     System.out.println("Exiting...");
                     scanner.close();
                     return;

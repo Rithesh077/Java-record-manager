@@ -39,6 +39,20 @@ public class RecordManager {
         return csvBuilder.toString();
     }
 
+    public boolean updateRecord(long ID, String newDetails) {
+        Record record = getRecord(ID);
+        if (record != null) {
+            records.remove(record);
+            records.add(new SimpleRecord(ID, newDetails));
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deleteRecord(long ID) {
+        return records.removeIf(record -> record.getId() == ID);
+    }
+
     public void saveToFile(String filename) {
         List<String> csvLines = new ArrayList<>();
         for (Record record : this.records) {
