@@ -39,18 +39,19 @@ public class RecordManager {
         return csvBuilder.toString();
     }
 
-    public boolean updateRecord(long ID, String newDetails) {
-        Record record = getRecord(ID);
-        if (record != null) {
-            records.remove(record);
-            records.add(new SimpleRecord(ID, newDetails));
-            return true;
-        }
-        return false;
-    }
-
     public boolean deleteRecord(long ID) {
         return records.removeIf(record -> record.getId() == ID);
+    }
+
+    public String updateDetails(long ID, String newDetails, String password) {
+        Record record = getRecord(ID);
+        if (record == null) {
+            return "Record not found.";
+        }
+        if (record.updateDetails(newDetails, password)) {
+            return "Record updated successfully.";
+        }
+        return "Invalid password.";
     }
 
     public void saveToFile(String filename) {
@@ -67,6 +68,7 @@ public class RecordManager {
         }
     }
 
+    @SuppressWarnings("UnnecessaryContinue")
     public void loadFromFile(String filename) {
         File file = new File(filename);
         if (!file.exists()) {
@@ -78,17 +80,24 @@ public class RecordManager {
             List<String> lines = Files.readAllLines(Paths.get(filename));
             for (String line : lines) {
                 String[] parts = line.split(",");
+                if (parts.length != 3) {
+                    System.out.println("Skipping malformed record line: " + line);
+                    continue; // skip bad line
+                }
 
-                if (parts.length == 2) {
+                try {
                     long id = Long.parseLong(parts[0]);
                     String details = parts[1];
-                    this.records.add(new SimpleRecord(id, details));
+                    String password = parts[2];
+                    this.records.add(new SimpleRecord(id, details, password));
+                } catch (NumberFormatException e) {
+                    System.out.println("Skipping record with invalid ID: " + line);
                 }
             }
             System.out.println("Successfully loaded " + records.size() + " records from " + filename);
-        } catch (IOException | NumberFormatException e) {
+        } catch (IOException e) {
             System.out.println("Error loading records from file: " + e.getMessage());
         }
-
     }
+
 }

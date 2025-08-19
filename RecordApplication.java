@@ -18,7 +18,8 @@ public class RecordApplication {
             System.out.println("3. List All Records");
             System.out.println("4. Save your record");
             System.out.println("5. Delete Record by ID");
-            System.out.println("6. Exit");
+            System.out.println("6. Update Record with Password");
+            System.out.println("7. Exit");
             System.out.print("Choose an option: ");
 
             int choice;
@@ -39,7 +40,9 @@ public class RecordApplication {
 
                         System.out.print("Enter Record Details: ");
                         String details = scanner.nextLine();
-                        recordManager.addRecord(new SimpleRecord(id, details));
+                        System.out.print("Set a Password for this Record: ");
+                        String password = scanner.nextLine();
+                        recordManager.addRecord(new SimpleRecord(id, details, password));
                         System.out.println("Record added successfully.");
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid ID format. Please enter a valid number.");
@@ -98,6 +101,24 @@ public class RecordApplication {
                     break;
                 }
                 case 6 -> {
+                    try {
+                        System.out.print("Enter Record ID to update: ");
+                        long updateId = Long.parseLong(scanner.nextLine());
+
+                        System.out.print("Enter new Record Details: ");
+                        String newDetails = scanner.nextLine();
+
+                        System.out.print("Enter Record Password: ");
+                        String password = scanner.nextLine();
+
+                        String result = recordManager.updateDetails(updateId, newDetails, password);
+                        System.out.println(result);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid ID format. Please enter a valid number.");
+                    }
+                    break;
+                }
+                case 7 -> {
                     System.out.println("Exiting...");
                     scanner.close();
                     return;
