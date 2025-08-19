@@ -6,4 +6,8 @@ public interface Record {
     String getDetails();
 
     String toCsv();
+
+    public boolean checkPassword(String password);
+
+    public boolean updateDetails(String newDetails, String passwordAttempt);
 }
