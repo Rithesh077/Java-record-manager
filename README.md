@@ -15,6 +15,10 @@ This application provides a text-based interface for a user to perform full CRUD
 - **Delete Records**: Find and remove a specific record by its ID.
 - **Data Persistence**: Records are automatically loaded from `records.csv` on startup and can be explicitly saved back to the file, ensuring data is not lost when the program closes.
 
+```csv
+id,details,password
+```
+
 ## Core Concepts Demonstrated
 
 **Object-Oriented Programming (OOP)**:
@@ -61,7 +65,7 @@ This application provides a text-based interface for a user to perform full CRUD
 ## Future Enhancements
 
 - **Data Validation**: Implementing robust validation for user input to prevent errors and ensure data consistency
-- **User Authentication**: Adding a password verification system to protect sensitive operations like updating and deleting records.
+- **User Authentication**: Adding a password verification system to protect sensitive operations like updating and deleting records. Future versions will also secure stored passwords using hashing instead of plain text.
 - **Data Transfer Object (DTO) Pattern**: Implementing a DTO class for user input (e.g., for creating and updating records). This would decouple the internal data model from the data structure used by the user interface, which is a common best practice in larger applications.
 - **New Record Type**: Implementing a new class (e.g., `AnalyzedTextRecord`) that also implements the `Record` interface but adds new functionality, demonstrating polymorphism.
 - **Structured ID**: Implementing a new class or system for more complex and meaningful record IDs.
