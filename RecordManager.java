@@ -31,14 +31,6 @@ public class RecordManager {
         return records;
     }
 
-    public String toCsv() {
-        StringBuilder csvBuilder = new StringBuilder();
-        for (Record record : records) {
-            csvBuilder.append(record.getId()).append(",").append(record.getDetails()).append("\n");
-        }
-        return csvBuilder.toString();
-    }
-
     public boolean deleteRecord(long ID) {
         return records.removeIf(record -> record.getId() == ID);
     }
@@ -80,18 +72,21 @@ public class RecordManager {
             List<String> lines = Files.readAllLines(Paths.get(filename));
             for (String line : lines) {
                 String[] parts = line.split(",");
-                if (parts.length != 3) {
-                    System.out.println("Skipping malformed record line: " + line);
-                    continue; // skip bad line
-                }
-
-                try {
-                    long id = Long.parseLong(parts[0]);
-                    String details = parts[1];
-                    String password = parts[2];
-                    this.records.add(new SimpleRecord(id, details, password));
-                } catch (NumberFormatException e) {
-                    System.out.println("Skipping record with invalid ID: " + line);
+                if (parts.length == 4) {
+                    String type = parts[0];
+                    long id = Long.parseLong(parts[1]);
+                    String details = parts[2];
+                    String password = parts[3];
+                    Record newRecord = null;
+                    switch (type) {
+                        case "Simple" ->
+                            newRecord = new SimpleRecord(id, details, password);
+                        case "Analyzed" ->
+                            newRecord = new AnalyzedTextRecord(id, details, password);
+                    }
+                    if (newRecord != null) {
+                        this.records.add(newRecord);
+                    }
                 }
             }
             System.out.println("Successfully loaded " + records.size() + " records from " + filename);
