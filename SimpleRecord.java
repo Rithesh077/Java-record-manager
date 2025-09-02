@@ -68,7 +68,7 @@ public class SimpleRecord implements Record {
 
     @Override
     public String toCsv() {
-        return ID + "," + Details + "," + password;
+        return "Simple," + ID + "," + Details + "," + password;
     }
 
     @Override
