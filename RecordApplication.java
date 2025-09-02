@@ -44,8 +44,10 @@ public class RecordApplication {
                         String password = scanner.nextLine();
                         recordManager.addRecord(new SimpleRecord(id, details, password));
                         System.out.println("Record added successfully.");
-                    } catch (NumberFormatException e) {
+                    } catch (NumberFormatException e ) {
                         System.out.println("Invalid ID format. Please enter a valid number.");
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Error adding record: " + e.getMessage());
                     }
                     break;
                 }
