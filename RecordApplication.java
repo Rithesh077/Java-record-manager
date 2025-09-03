@@ -35,16 +35,26 @@ public class RecordApplication {
             switch (choice) {
                 case 1 -> {
                     try {
-                        System.out.print("Enter Record ID: ");
+                        System.out.println("Enter the record type(simple/analyzed):");
+                        String type = scanner.nextLine().toLowerCase();
+
+                        System.out.println("Enter Record ID:");
                         long id = Long.parseLong(scanner.nextLine());
 
                         System.out.print("Enter Record Details: ");
                         String details = scanner.nextLine();
+
                         System.out.print("Set a Password for this Record: ");
                         String password = scanner.nextLine();
-                        recordManager.addRecord(new SimpleRecord(id, details, password));
-                        System.out.println("Record added successfully.");
-                    } catch (NumberFormatException e ) {
+
+                        if (type.equals("simple")) {
+                            recordManager.addRecord(new SimpleRecord(id, details, password));
+                            System.out.println("Record Added");
+                        } else if (type.equals("analyzed")) {
+                            recordManager.addRecord(new AnalyzedTextRecord(id, details, password));
+                            System.out.print("Added analyzed Record");
+                        }
+                    } catch (NumberFormatException e) {
                         System.out.println("Invalid ID format. Please enter a valid number.");
                     } catch (IllegalArgumentException e) {
                         System.out.println("Error adding record: " + e.getMessage());
@@ -116,7 +126,7 @@ public class RecordApplication {
                         String result = recordManager.updateDetails(updateId, newDetails, password);
                         System.out.println(result);
                     } catch (NumberFormatException e) {
-                        System.out.println("Invalid ID format. Please enter a valid number.");
+                        System.out.println("Invalid ID Format. Please enter a valid number.");
                     }
                     break;
                 }
@@ -125,6 +135,7 @@ public class RecordApplication {
                     scanner.close();
                     return;
                 }
+
                 default ->
                     System.out.println("Invalid option. Please try again.");
             }
