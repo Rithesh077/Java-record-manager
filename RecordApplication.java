@@ -1,4 +1,5 @@
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -6,7 +7,7 @@ public class RecordApplication {
 
     private static final String FILENAME = "records.csv";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         RecordManager recordManager = new RecordManager();
         recordManager.loadFromFile(FILENAME);
         Scanner scanner = new Scanner(System.in);
