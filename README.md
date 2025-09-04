@@ -70,12 +70,14 @@ Analyzed,102,Hello World,MyPass@2025
     ```
 5.  Follow the on-screen instructions to interact with the record manager.
 
-## Known Limitations:
+## Known Limitations
 
-- `SimpleRecord` forbids commas in details (to keep CSV parsing simple).
-- `AnalyzedTextRecord` allows commas, which may cause CSV parsing issues.
-- No check for duplicate IDs when adding new records.
+- `SimpleRecord` forbids commas in details to simplify CSV parsing.
+- `AnalyzedTextRecord` allows commas, which can potentially break CSV parsing in certain edge cases.
 - Passwords are stored as plain text in the CSV file.
+- CSV parsing assumes exactly 4 fields per line; malformed lines are skipped.
+- No hashing or encryption is applied to passwords.
+- Input validation for `AnalyzedTextRecord` is minimal; any text is accepted.
 
 ## Future Enhancements
 
