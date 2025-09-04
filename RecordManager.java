@@ -1,5 +1,4 @@
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -7,6 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecordManager {
+// TODO: Implement password hashing instead of storing plain text
+// TODO: Support multi-line input for Details in CLI
+// TODO: Fully comply with CSV standard (RFC 4180) for quotes, commas, and newlines
+// TODO: Improve handling of unknown record types when loading CSV
+// TODO: Add proper logging instead of using System.out.println
+// TODO: Consider validating/analyzing Details fields for AnalyzedTextRecord like SimpleRecord
 
     private final List<Record> records;
 
@@ -15,19 +20,18 @@ public class RecordManager {
     }
 
     public void addRecord(Record record) {
-        // todo: Prevent duplicate IDs (currently allows multiple records with the same ID).
+        boolean exists = records.stream().anyMatch(r -> r.getId() == record.getId());
+        if (exists) {
+            throw new IllegalArgumentException("A record with ID " + record.getId() + " already exists.");
+        }
         records.add(record);
     }
 
     public Record getRecord(long ID) {
-        // todo: Replace plain text storage with hashing.
-        // todo: Escape/quote fields to handle commas safely.
-        for (Record record : records) {
-            if (record.getId() == ID) {
-                return record;
-            }
-        }
-        return null;
+        return records.stream()
+                .filter(record -> record.getId() == ID)
+                .findFirst()
+                .orElse(null);
     }
 
     public List<Record> getAllRecords() {
@@ -63,39 +67,78 @@ public class RecordManager {
         }
     }
 
-    @SuppressWarnings("UnnecessaryContinue")
-    public void loadFromFile(String filename) {
-        File file = new File(filename);
-        if (!file.exists()) {
-            System.out.println("No existing data file found. Starting with an empty database.");
-            return;
+    public void loadFromFile(String filename) throws IOException {
+        List<String> lines = Files.readAllLines(Paths.get(filename));
+
+        for (int lineNum = 0; lineNum < lines.size(); lineNum++) {
+            String line = lines.get(lineNum);
+            List<String> parts = parseCsvLine(line);
+
+            if (parts.size() != 4) {
+                System.out.println("Skipping malformed line " + (lineNum + 1) + ": " + line);
+                continue;
+            }
+
+            try {
+                String type = parts.get(0);
+                long id = Long.parseLong(parts.get(1));
+                String details = parts.get(2);
+                String password = parts.get(3);
+
+                Record newRecord = switch (type) {
+                    case "Simple" ->
+                        new SimpleRecord(id, details, password);
+                    case "Analyzed" ->
+                        new AnalyzedTextRecord(id, details, password);
+                    default ->
+                        null;
+                };
+
+                if (newRecord != null) {
+                    this.records.add(newRecord);
+                } else {
+                    System.out.println("Unknown record type on line " + (lineNum + 1) + ": " + type);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid ID format on line " + (lineNum + 1) + ": " + line);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error creating record on line " + (lineNum + 1) + ": " + e.getMessage());
+            }
         }
 
-        try {
-            List<String> lines = Files.readAllLines(Paths.get(filename));
-            for (String line : lines) {
-                String[] parts = line.split(",");
-                if (parts.length == 4) {
-                    String type = parts[0];
-                    long id = Long.parseLong(parts[1]);
-                    String details = parts[2];
-                    String password = parts[3];
-                    Record newRecord = null;
-                    switch (type) {
-                        case "Simple" ->
-                            newRecord = new SimpleRecord(id, details, password);
-                        case "Analyzed" ->
-                            newRecord = new AnalyzedTextRecord(id, details, password);
-                    }
-                    if (newRecord != null) {
-                        this.records.add(newRecord);
-                    }
-                }
-            }
-            System.out.println("Successfully loaded " + records.size() + " records from " + filename);
-        } catch (IOException e) {
-            System.out.println("Error loading records from file: " + e.getMessage());
-        }
+        System.out.println("Successfully loaded " + records.size() + " records from " + filename);
     }
 
+    public static String escapeCsv(String input) {
+        if (input.contains(",") || input.contains("\"") || input.contains("\n")) {
+            input = input.replace("\"", "\"\"");
+            return "\"" + input + "\"";
+        }
+        return input;
+    }
+
+    private List<String> parseCsvLine(String line) {
+        List<String> parts = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inQuotes = false;
+
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '"') {
+                if (inQuotes && i + 1 < line.length() && line.charAt(i + 1) == '"') {
+                    current.append('"');
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (c == ',' && !inQuotes) {
+                parts.add(current.toString().trim());
+                current.setLength(0);
+            } else {
+                current.append(c);
+            }
+        }
+        parts.add(current.toString().trim());
+        return parts;
+    }
 }

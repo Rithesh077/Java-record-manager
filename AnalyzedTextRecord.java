@@ -42,13 +42,10 @@ public class AnalyzedTextRecord implements Record {
 
     @Override
     public String toCsv() {
-        return "Analyzed," + ID + "," + Details + "," + password;
+        return "Analyzed," + ID + "," + RecordManager.escapeCsv(Details) + "," + RecordManager.escapeCsv(password);
     }
 
     private void performAnalysis() {
-
-        // todo: Consider applying the same validation rules as SimpleRecord
-        // (e.g., disallow commas or escape them before saving).
         if (Details == null || Details.trim().isEmpty()) {
             this.wordCount = 0;
             this.characterCount = 0;
