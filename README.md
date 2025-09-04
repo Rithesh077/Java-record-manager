@@ -2,22 +2,29 @@
 
 ## Overview
 
-A simple command-line application built in Java to manage a collection of records. This project was created as a step-by-step exercise to learn and apply core Object-Oriented Programming (OOP) principles from first principles.
+A simple command-line application built in Java to manage a collection of records. This project was created as a step-by-step exercise to learn and apply core Object-Oriented Programming (OOP) principles.
 
 This application provides a text-based interface for a user to perform full CRUD (Create, Read, Update, Delete) operations. Each record consists of a unique ID and textual details. The program also features data persistence, saving all records to a local `records.csv` file.
 
 ## Features
 
 - **Interactive Menu**: A simple and robust command-line menu to navigate the application's features.
+- **Record Types** :
+  - `SimpleRecord`: Basic record with details and password validation.
+  - `AnalyzedTextRecord`: Automatically analyzes details (word count, character count, vowel count).
 - **Add Records**: Create new records with a unique ID and details.
 - **View Records**: Retrieve a specific record by its ID or list all records.
-- **Update Records**: Find an existing record by its ID and modify its details.
+- **Update Records**: Find an existing record by its ID and modify its details.(password-protected)
 - **Delete Records**: Find and remove a specific record by its ID.
 - **Data Persistence**: Records are automatically loaded from `records.csv` on startup and can be explicitly saved back to the file, ensuring data is not lost when the program closes.
-- **Data Validation**: The program validates user details based on rules such as non empty details without commas and non empty and strong password preventing bad data from entering the system.
+- **Data Validation**:
+  - `SimpleRecord`: Ensures strong password (≥8 chars, includes uppercase, lowercase, digit, special character) and prevents commas in details.
+  - `AnalyzedTextRecord`: Performs text analysis automatically.
+    Example`CSV`format:
 
 ```csv
-id,details,password
+Simple,101,Meeting at 10am,Strong@123
+Analyzed,102,Hello World,MyPass@2025
 ```
 
 ## Core Concepts Demonstrated
@@ -26,7 +33,7 @@ id,details,password
 
 - **Encapsulation**: Hiding the internal data of objects (`private` fields) and providing public methods for controlled access (e.g., `RecordManager` hiding its `ArrayList`).
 - **Abstraction**: Using an `interface` (`Record`) to define a contract for what a record must be able to do, separating the "what" from the "how."
-- **Polymorphism**: The `RecordManager` works with the `Record` interface, allowing it to manage different types of records without changing its own code.
+- **Polymorphism**: `RecordManager` can manage both `SimpleRecord` and `AnalyzedTextRecord`.
 
 **Java Fundamentals**:
 
@@ -63,11 +70,34 @@ id,details,password
     ```
 5.  Follow the on-screen instructions to interact with the record manager.
 
+## Known Limitations:
+
+- `SimpleRecord` forbids commas in details (to keep CSV parsing simple).
+- `AnalyzedTextRecord` allows commas, which may cause CSV parsing issues.
+- No check for duplicate IDs when adding new records.
+- Passwords are stored as plain text in the CSV file.
+
 ## Future Enhancements
 
-- **User Authentication**: Adding a password verification system to protect sensitive operations like updating and deleting records. Future versions will also secure stored passwords using hashing instead of plain text.
-- **Data Transfer Object (DTO) Pattern**: Implementing a DTO class for user input (e.g., for creating and updating records). This would decouple the internal data model from the data structure used by the user interface, which is a common best practice in larger applications.
-- **New Record Type**: Implementing a new class (e.g., `AnalyzedTextRecord`) that also implements the `Record` interface but adds new functionality, demonstrating polymorphism.
-- **Structured ID**: Implementing a new class or system for more complex and meaningful record IDs.
-- **Enhanced Error Handling**: Providing more specific feedback for different types of I/O errors.
-- **Dynamic Filenames**: Prompt the user to specify a file name when loading and saving the records instead of using hardcoded names.
+- **Unified Validation**: Apply consistent rules to both `SimpleRecord` and `AnalyzedTextRecord`.
+- **Duplicate ID Handling**: Prevent or warn when a record with the same ID already exists.
+- **Improved CSV Handling**:
+- Escape/quote values with commas instead of rejecting them.
+- Consider JSON or XML as alternative storage formats.
+- **Password Security**: Replace plain text storage with hashing (`SHA-256`, `BCrypt`).
+- **Search Feature**: Search records by keyword in details.
+- **Dynamic Filenames**: Allow user to specify the save/load file.
+- **Refactored Design**: Move input handling (`Scanner`) into a dedicated `ConsoleUI` class.
+- **Unique IDs**: Replace manual IDs with auto-generated UUIDs.
+- **Export Options**: Add JSON/Excel export for better integration.
+
+## Future Direction (Advanced)
+
+A potential evolution of this project is to expand the concept of `Record` into a more generic `DataObject`, capable of handling various types of structured and unstructured data:
+
+- Tabular data (CSV, Excel)
+- Semi-structured data (JSON, XML)
+- Binary formats (images, audio, video)
+
+Such a system would require multiple parsers, storage backends, and abstractions for heterogeneous data.
+While outside the scope of this repository, this direction illustrates how the principles demonstrated here (encapsulation, abstraction, polymorphism, persistence) can scale into larger data management frameworks.

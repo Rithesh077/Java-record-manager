@@ -47,6 +47,8 @@ public class AnalyzedTextRecord implements Record {
 
     private void performAnalysis() {
 
+        // todo: Consider applying the same validation rules as SimpleRecord
+        // (e.g., disallow commas or escape them before saving).
         if (Details == null || Details.trim().isEmpty()) {
             this.wordCount = 0;
             this.characterCount = 0;

@@ -38,6 +38,7 @@ public class SimpleRecord implements Record {
 
     public SimpleRecord(long ID, String Details, String password) {
         if (Details == null || Details.trim().isEmpty() || Details.contains(",")) {
+            // todo: Improve CSV handling instead of forbidding commas in details.
             throw new IllegalArgumentException("Details cannot be null, empty, or contain commas.");
         }
 
