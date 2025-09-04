@@ -15,10 +15,13 @@ public class RecordManager {
     }
 
     public void addRecord(Record record) {
+        // todo: Prevent duplicate IDs (currently allows multiple records with the same ID).
         records.add(record);
     }
 
     public Record getRecord(long ID) {
+        // todo: Replace plain text storage with hashing.
+        // todo: Escape/quote fields to handle commas safely.
         for (Record record : records) {
             if (record.getId() == ID) {
                 return record;
