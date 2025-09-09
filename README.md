@@ -21,6 +21,8 @@ This application provides a text-based interface for a user to perform full CRUD
   - `SimpleRecord`: Ensures strong password (≥8 chars, includes uppercase, lowercase, digit, special character) and prevents commas in details.
   - `AnalyzedTextRecord`: Performs text analysis automatically.
     Example`CSV`format:
+- **Duplicate ID prevention**: Adding a record with existing ID is not allowed.
+- **Unified Validation**: Both Simple and Analyzed Record types use a common Validation to prevent empty of null details.
 
 ```csv
 Simple,101,Meeting at 10am,Strong@123
@@ -81,8 +83,6 @@ Analyzed,102,Hello World,MyPass@2025
 
 ## Future Enhancements
 
-- **Unified Validation**: Apply consistent rules to both `SimpleRecord` and `AnalyzedTextRecord`.
-- **Duplicate ID Handling**: Prevent or warn when a record with the same ID already exists.
 - **Improved CSV Handling**:
 - Escape/quote values with commas instead of rejecting them.
 - Consider JSON or XML as alternative storage formats.
