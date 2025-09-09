@@ -37,10 +37,7 @@ public class SimpleRecord implements Record {
     }
 
     public SimpleRecord(long ID, String Details, String password) {
-        if (Details == null || Details.trim().isEmpty()) {
-            throw new IllegalArgumentException("Details cannot be null or empty.");
-        }
-
+        RecordManager.validateDetails(Details);
         validatePassword(password);
 
         this.ID = ID;
