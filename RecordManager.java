@@ -141,4 +141,10 @@ public class RecordManager {
         parts.add(current.toString().trim());
         return parts;
     }
+
+    public static void validateDetails(String details) {
+        if (details == null || details.trim().isEmpty()) {
+            throw new IllegalArgumentException("Details cannot be null or empty.");
+        }
+    }
 }

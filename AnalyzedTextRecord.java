@@ -9,6 +9,7 @@ public class AnalyzedTextRecord implements Record {
     private int vowelCount;
 
     public AnalyzedTextRecord(long ID, String Details, String password) {
+        RecordManager.validateDetails(Details);
         this.ID = ID;
         this.Details = Details;
         this.password = password;
