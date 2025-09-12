@@ -1,7 +1,5 @@
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Scanner;
 
 public class RecordApplication {
 
@@ -10,138 +8,8 @@ public class RecordApplication {
     public static void main(String[] args) throws IOException {
         RecordManager recordManager = new RecordManager();
         recordManager.loadFromFile(FILENAME);
-        Scanner scanner = new Scanner(System.in);
 
-        while (true) {
-            System.out.println("\nRecord Management System:");
-            System.out.println("1. Add Record");
-            System.out.println("2. Get Record by ID");
-            System.out.println("3. List All Records");
-            System.out.println("4. Save your record");
-            System.out.println("5. Delete Record by ID");
-            System.out.println("6. Update Record with Password");
-            System.out.println("7. Exit");
-            System.out.print("Choose an option: ");
-
-            int choice;
-            try {
-                String inputLine = scanner.nextLine();
-                choice = Integer.parseInt(inputLine);
-            } catch (NumberFormatException e) {
-
-                System.out.println("Invalid input. Please enter a number.");
-                continue;
-            }
-
-            OUTER:
-            switch (choice) {
-                case 1 -> {
-                    try {
-                        System.out.println("Enter the record type(simple/analyzed):");
-                        String type = scanner.nextLine().toLowerCase();
-                        System.out.println("Enter Record ID:");
-                        long id = Long.parseLong(scanner.nextLine());
-                        System.out.print("Enter Record Details: ");
-                        String details = scanner.nextLine();
-                        System.out.print("Set a Password for this Record: ");
-                        String password = scanner.nextLine();
-                        Record newRecord;
-                        switch (type) {
-                            case "simple" ->
-                                newRecord = new SimpleRecord(id, details, password);
-                            case "analyzed" ->
-                                newRecord = new AnalyzedTextRecord(id, details, password);
-                            default -> {
-                                System.out.println("Unknown record type. Please choose simple or analyzed.");
-                                break OUTER;
-                            }
-                        }
-                        recordManager.addRecord(newRecord);
-                        System.out.println("Record added successfully!");
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid ID format. Please enter a valid number.");
-                    } catch (IllegalArgumentException e) {
-                        System.out.println("Error adding record: " + e.getMessage());
-                    }
-                    break;
-                }
-                case 2 -> {
-                    try {
-                        System.out.print("Enter Record ID to retrieve: ");
-                        long retrieveId = Long.parseLong(scanner.nextLine());
-
-                        Record record = recordManager.getRecord(retrieveId);
-                        if (record != null) {
-                            System.out.println("\nRetrieved Record:");
-                            System.out.println("ID: " + record.getId());
-                            System.out.println("Details: " + record.getDetails());
-                        } else {
-                            System.out.println("Record not found.");
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid ID format. Please enter a valid number.");
-                    }
-                    break;
-                }
-                case 3 -> {
-                    System.out.println("\nAll Records:");
-                    List<Record> allRecords = recordManager.getAllRecords();
-                    if (allRecords.isEmpty()) {
-                        System.out.println("No records found.");
-                    } else {
-                        for (Record r : allRecords) {
-                            System.out.println("ID: " + r.getId() + ", Details: " + r.getDetails());
-                        }
-                    }
-                    break;
-                }
-                case 4 -> {
-                    recordManager.saveToFile(FILENAME);
-                    System.out.println("Records saved to " + FILENAME);
-                    break;
-                }
-                case 5 -> {
-                    try {
-                        System.out.print("Enter Record ID to delete: ");
-                        long deleteId = Long.parseLong(scanner.nextLine());
-
-                        boolean deleted = recordManager.deleteRecord(deleteId);
-                        if (deleted) {
-                            System.out.println("Record deleted successfully.");
-                        } else {
-                            System.out.println("Record not found.");
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid ID format. Please enter a valid number.");
-                    }
-                    break;
-                }
-                case 6 -> {
-                    try {
-                        System.out.print("Enter Record ID to update: ");
-                        long updateId = Long.parseLong(scanner.nextLine());
-
-                        System.out.print("Enter new Record Details: ");
-                        String newDetails = scanner.nextLine();
-
-                        System.out.print("Enter Record Password: ");
-                        String password = scanner.nextLine();
-
-                        String result = recordManager.updateDetails(updateId, newDetails, password);
-                        System.out.println(result);
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid ID Format. Please enter a valid number.");
-                    }
-                    break;
-                }
-                case 7 -> {
-                    System.out.println("Exiting...");
-                    scanner.close();
-                    return;
-                }
-                default ->
-                    System.out.println("Invalid option. Please try again.");
-            }
-        }
+        ConsoleUI ui = new ConsoleUI(recordManager, FILENAME);
+        ui.start();
     }
 }
